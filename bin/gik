@@ -1,0 +1,95 @@
+#!/usr/bin/env node
+
+const program = require("commander");
+
+const inquirer = require("inquirer");
+
+//给输入的字家长颜色
+const Printer = require("@darkobits/lolcatjs");
+
+const shell = require("shelljs");
+
+const homePath = require("home-path");
+
+const download = require("download-git-repo");
+
+const chalk = require("chalk");
+
+const ora = require('ora');
+
+const template = "direct:https://github.com/SmilMan/gik-template";
+
+
+const input = [
+    '--------- -------',
+    '    /\\_____/\\',
+    '   /  o   o  \\',
+    '  ( ==  ^  == )',
+    '   )         (',
+    '  (           )',
+    ' ( (  )   (  ) )',
+    '(__(__)___(__)__)',
+    '--------- -----------',
+    '------- 0.0.1 ---------'
+].join('\n')
+
+const binHinder = {
+    init(other) {
+        inquirer
+            .prompt([
+                /* Pass your questions in here */
+                {
+                    type: "list",
+                    choices: ["TypeScirpt", "EcmaScript", "node", "Eslint", "bable"],
+                    message: "choices your luaguage",
+                    name: "list"
+                }, {
+                    type: "text",
+                    message: "input your filename",
+                    name: "dirname"
+                }
+            ])
+            .then(answers => {
+                const spinner = ora("---------download---------")
+                const _dirname = `${homePath()}/Desktop/${answers.dirname}`;
+                shell.cd(`${homePath()}/Desktop`);
+                shell.rm('-rf', _dirname);
+                spinner.start();
+                download(template, _dirname, {
+                    clone: true
+                }, err => {
+                    spinner.stop();
+                    if (err) {
+                        console.log(chalk.red(`download err :${err.message}`))
+                    } else {
+                        console.log(chalk.green("this project init successful"))
+                    }
+                })
+            })
+    }
+}
+
+program.version(Printer.default.fromString(input), "-v, --version");
+
+program
+    .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
+    //blue 是默认值     
+
+program
+    .version(`@gik/cli ${require('../package').version}`)
+    .usage('<command> [options]')
+
+program
+    .name('gik')
+    .usage("gao_cli")
+    .arguments("<cmd> [env]")
+    .action((cmd, other) => {
+        console.log(cmd, other)
+        const hinder = binHinder[cmd];
+        if (hinder) {
+            hinder(other);
+        } else {
+            console.log(chalk.yellow(`<${cmd}> this command is no definded`))
+        }
+    })
+program.parse(process.argv);
