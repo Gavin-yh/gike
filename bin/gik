@@ -1,27 +1,15 @@
 #!/usr/bin/env node
 
+const path = require('path')
 const program = require("commander");
-
-const inquirer = require("inquirer");
-
-//给输入的字家长颜色
 const Printer = require("@darkobits/lolcatjs");
-
-const shell = require("shelljs");
-
-const homePath = require("home-path");
-
-const download = require("download-git-repo");
-
 const chalk = require("chalk");
-
-const ora = require('ora');
-
-const template = "direct:https://github.com/SmilMan/gik-template";
-
+const packagePath = path.join(__dirname, '../package.json')
+const argv = require('minimist')(process.argv.slice(2));
+const command = argv._[0];
+const defaultMode = command === 'build' ? 'production' : 'development';
 
 const input = [
-    '--------- -------',
     '    /\\_____/\\',
     '   /  o   o  \\',
     '  ( ==  ^  == )',
@@ -29,67 +17,81 @@ const input = [
     '  (           )',
     ' ( (  )   (  ) )',
     '(__(__)___(__)__)',
-    '--------- -----------',
-    '------- 0.0.1 ---------'
 ].join('\n')
 
-const binHinder = {
-    init(other) {
-        inquirer
-            .prompt([
-                /* Pass your questions in here */
-                {
-                    type: "list",
-                    choices: ["TypeScirpt", "EcmaScript", "node", "Eslint", "bable"],
-                    message: "choices your luaguage",
-                    name: "list"
-                }, {
-                    type: "text",
-                    message: "input your filename",
-                    name: "dirname"
-                }
-            ])
-            .then(answers => {
-                const spinner = ora("---------download---------")
-                const _dirname = `${homePath()}/Desktop/${answers.dirname}`;
-                shell.cd(`${homePath()}/Desktop`);
-                shell.rm('-rf', _dirname);
-                spinner.start();
-                download(template, _dirname, {
-                    clone: true
-                }, err => {
-                    spinner.stop();
-                    if (err) {
-                        console.log(chalk.red(`download err :${err.message}`))
-                    } else {
-                        console.log(chalk.green("this project init successful"))
-                    }
-                })
-            })
-    }
+function helpMsg() {
+    console.log(Printer.default.fromString( `
+Usage: gik [command] [args] [--options]
+
+Commands:
+  gik create          Create the project
+  gik start           Running the project in the development environment
+  gik build           Build target directory.
+  gik logo            Show project Logo
+  gik deploy          Deploy project
+
+Options:
+  --help, -h           [boolean] show help
+  --version, -v        [boolean] show version
+  --name, -n           [string] the project name
+  --mode, -m           [string]  specify env mode (default: 'development' for dev, 'production' for build)
+`))
 }
 
-program.version(Printer.default.fromString(input), "-v, --version");
 
-program
-    .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
-    //blue 是默认值     
+(function() {
+    const { help, h, mode, m, version, v } = argv;
+    const envMode = mode || m || defaultMode
+    const options = resolveOptions(envMode)
+    if (help || h) {
+        helpMsg()
+        return;
+    }
+    else if (version || v) {
+        console.log(
+            chalk.magenta(`gik ${require(`${packagePath}`).version}`)
+        )
+    }
+    else if (options.command === 'create') {
+        require('../lib/create')(options)
+    }
+    else if (options.command === 'start') {
+        require('../lib/start')(options)
+    }
+    else if (options.command === 'build'){
+        build()
+    }
+    else if (options.command === 'deploy') {
+        console.log(
+            Printer.default.fromString(input)
+        )
+    }
+    else if (options.command === 'logo') {
+        console.log(
+            Printer.default.fromString(input)
+        )
+    }
+})()
 
-program
-    .version(`@gik/cli ${require('../package').version}`)
-    .usage('<command> [options]')
+function resolveOptions(mode) {
+    const commandList = argv._
+    argv.mode = mode
 
-program
-    .name('gik')
-    .usage("gao_cli")
-    .arguments("<cmd> [env]")
-    .action((cmd, other) => {
-        console.log(cmd, other)
-        const hinder = binHinder[cmd];
-        if (hinder) {
-            hinder(other);
-        } else {
-            console.log(chalk.yellow(`<${cmd}> this command is no definded`))
+    Object.keys(argv).forEach(key => {
+        if (argv[key] === 'false') {
+            argv[key] = false
+        }
+
+        if(argv[key] === 'true') {
+            argv[key] = true
         }
     })
-program.parse(process.argv);
+
+    //command
+    if(commandList[0]) {
+        argv.command = commandList[0]
+        argv.commandArg = commandList[1]
+    }
+
+    return argv
+}
