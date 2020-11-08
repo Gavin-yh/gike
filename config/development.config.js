@@ -1,16 +1,15 @@
 const path = require('path')
-const baseConfig = require('./default.config')
-const merge = require('deepmerge')
+const rootPath = process.cwd()
 
-module.exports = merge(baseConfig, {
+module.exports = {
   output: {
-    path: path.join(__dirname, 'dev-build'),
+  path: path.join(rootPath, 'dev-build'),
     // 指定 publicPath 避免热更新配置请求失败
     publicPath: `http://localhost:34687/`,
   },
   // stats: 'verbose',
   devServer: {
-    contentBase: path.join(__dirname, 'dev-build'),
+    contentBase: path.join(rootPath, 'dev-build'),
     host: '0.0.0.0',
     hot: true,
     overlay: true,
@@ -27,4 +26,4 @@ module.exports = merge(baseConfig, {
       'Access-Control-Allow-Origin': '*',
     }
   },
-})
+}
