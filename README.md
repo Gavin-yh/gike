@@ -1,27 +1,26 @@
-### gike 
-
-#### Introduce
+### Introduce
 > It is a temporary interest project. The goal of the project is to integrate the mainstream frameworks in the market, such as react and Vue.
 
-#### Install
-(```)
-   $ npm install gike -g
-(```)
+### Install
+`$ npm install gike -g`
 
-#### Usage
+
+### Usage
 Show help items
-(```)
-gike -h (--help)
-(````)
+
+`gike -h (--help)`
 
 Create project
-(```)
-gike create projectName   or  gike create
-(```)
+
+`gike create projectName   or  gike create`
 
 Show logo && version
-(```)
+
+```
 gike logo
 
+
 gike -v(--version)
-(```)
+```
+
+> To be continued
