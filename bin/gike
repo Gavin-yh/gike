@@ -21,14 +21,14 @@ const input = [
 
 function helpMsg() {
     console.log(Printer.default.fromString( `
-Usage: gik [command] [args] [--options]
+Usage: gike [command] [args] [--options]
 
 Commands:
-  gik create          Create the project
-  gik start           Running the project in the development environment
-  gik build           Build target directory.
-  gik logo            Show project Logo
-  gik deploy          Deploy project
+  gike create          Create the project
+  gike start           Running the project in the development environment
+  gike build           Build target directory.
+  gike logo            Show project Logo
+  gike deploy          Deploy project
 
 Options:
   --help, -h           [boolean] show help
@@ -49,7 +49,7 @@ Options:
     }
     else if (version || v) {
         console.log(
-            chalk.magenta(`gik ${require(`${packagePath}`).version}`)
+            chalk.magenta(`gike ${require(`${packagePath}`).version}`)
         )
     }
     else if (options.command === 'create') {
@@ -59,7 +59,7 @@ Options:
         require('../lib/start')(options)
     }
     else if (options.command === 'build'){
-        build()
+        require('../lib/build')(options)
     }
     else if (options.command === 'deploy') {
         console.log(
