@@ -5,7 +5,7 @@ const merge = require('deepmerge')
 const rootPath = process.cwd()
 
 function getCustomConfig() {
-    const configPath = `${rootPath}/gik.config.js`
+    const configPath = `${rootPath}/gike.config.js`
      
     if (fs.existsSync(configPath)) {
         return require(`${configPath}`)

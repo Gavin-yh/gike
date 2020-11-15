@@ -6,21 +6,48 @@
 
 
 ### Usage
-Show help items
-
-`gike -h (--help)`
-
-Create project
-
-`gike create projectName   or  gike create`
-
-Show logo && version
-
+**basic**
 ```
+<!-- Show help items -->
+
+gike -h (--help)
+
+
+
+<!-- Create project -->
+
+gike create projectName
+
+
+gike create
+
+
+<!-- Show logo && version -->
+
 gike logo
 
 
 gike -v(--version)
+
 ```
+
+**project**
+```
+<!-- create project, you should install gike -->
+
+gike create  projectName
+
+
+cd projectName
+
+
+npm install
+
+
+npm run build
+
+```
+
+
 
 > To be continued
